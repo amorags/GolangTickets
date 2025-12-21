@@ -7,6 +7,7 @@ import (
 	"github.com/alexs/golang_test/internal/middleware"
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 )
 
 // New returns the configured router with all routes and middleware
@@ -17,23 +18,18 @@ func New() http.Handler {
 	r.Use(chimiddleware.Logger)
 	r.Use(chimiddleware.Recoverer)
 
-	// Serve static files
-	fileServer := http.FileServer(http.Dir("./web/static"))
-	r.Handle("/static/*", http.StripPrefix("/static/", fileServer))
+	// CORS middleware for Nuxt frontend
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}))
 
-	// Serve HTML pages
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./web/index.html")
-	})
-	r.Get("/home", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./web/home.html")
-	})
-	r.Get("/event", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./web/event.html")
-	})
-	r.Get("/profile-page", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./web/profile.html")
-	})
+	// Note: Frontend is now a separate Nuxt app running on port 3000
+	// No need to serve static files from Go backend anymore
 
 	// Public Routes (no auth required)
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
