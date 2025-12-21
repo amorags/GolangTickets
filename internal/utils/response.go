@@ -35,3 +35,16 @@ func Error(w http.ResponseWriter, statusCode int, message string) {
 		Error:   message,
 	})
 }
+
+// ErrorResponse sends an error JSON response with custom status code
+func ErrorResponse(w http.ResponseWriter, statusCode int, message string) {
+	Error(w, statusCode, message)
+}
+
+// SuccessResponse sends a successful JSON response with custom status code
+func SuccessResponse(w http.ResponseWriter, statusCode int, data interface{}) {
+	SendJSON(w, statusCode, Response{
+		Success: true,
+		Data:    data,
+	})
+}

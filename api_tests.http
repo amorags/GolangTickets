@@ -1,6 +1,8 @@
 ### Global Variables
 @host = http://localhost:8080
 @authToken = {{login.response.body.data.token}}
+@createdEventId = {{create_event.response.body.data.ID}}
+@bookingId = {{book_ticket.response.body.data.ID}}
 
 ### 1. Sign Up (Create a new user)
 # @name signup
@@ -24,6 +26,55 @@ Content-Type: application/json
 }
 
 ### 3. Get Profile (Protected Route)
-# This uses the token captured from the login request above automatically
 GET {{host}}/profile
+Authorization: Bearer {{authToken}}
+
+
+### --- EVENT MANAGEMENT ---
+
+### 4. Create Event (Protected)
+# @name create_event
+POST {{host}}/events
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "Summer Music Festival 2025",
+  "description": "A 3-day outdoor music festival featuring top artists.",
+  "event_type": "concert",
+  "venue_name": "Central Park",
+  "city": "New York",
+  "address": "123 Park Ave",
+  "date": "2025-07-15T18:00:00Z",
+  "price": 99.99,
+  "capacity": 5000,
+  "image_url": "https://example.com/festival.jpg"
+}
+
+### 5. Get All Events (Public)
+GET {{host}}/events
+
+### 6. Get Single Event (Public)
+GET {{host}}/events/{{createdEventId}}
+
+
+### --- BOOKING SYSTEM ---
+
+### 7. Book Ticket (Protected)
+# @name book_ticket
+POST {{host}}/bookings
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "event_id": {{createdEventId}},
+  "quantity": 2
+}
+
+### 8. Get My Bookings (Protected)
+GET {{host}}/bookings
+Authorization: Bearer {{authToken}}
+
+### 9. Cancel Booking (Protected)
+DELETE {{host}}/bookings/{{bookingId}}
 Authorization: Bearer {{authToken}}

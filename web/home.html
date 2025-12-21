@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket App - Events</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">Ticket App</h1>
+            <div class="nav-links">
+                <a href="/home" class="nav-link active">Events</a>
+                <a href="/profile-page" class="nav-link" id="profileLink">Profile</a>
+                <a href="/" class="nav-link" id="authLink">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        <div class="page-header">
+            <h2>Upcoming Events</h2>
+        </div>
+
+        <div id="eventsContainer" class="events-grid">
+            <div class="loading">Loading events...</div>
+        </div>
+    </div>
+
+    <script src="/static/home.js"></script>
+</body>
+</html>

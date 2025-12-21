@@ -32,7 +32,7 @@ func ConnectDB() {
 
 	// Auto-migrate the schemas
 	log.Println("Running Migrations...")
-	err = DB.AutoMigrate(&models.Event{}, &models.Ticket{}, &models.User{})
+	err = DB.AutoMigrate(&models.User{}, &models.Event{}, &models.Booking{})
 	if err != nil {
 		log.Fatal("Failed to migrate database. ", err)
 	}

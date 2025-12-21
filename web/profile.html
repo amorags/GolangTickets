@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket App - Profile</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">Ticket App</h1>
+            <div class="nav-links">
+                <a href="/home" class="nav-link">Events</a>
+                <a href="/profile-page" class="nav-link active">Profile</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        <div class="profile-page">
+            <h2>My Profile</h2>
+
+            <div id="profileContent" class="profile-content">
+                <div class="loading">Loading...</div>
+            </div>
+
+            <h2>My Bookings</h2>
+            <div id="bookingsContent" class="bookings-content">
+                <div class="loading">Loading bookings...</div>
+            </div>
+
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </div>
+    </div>
+
+    <script src="/static/profile.js"></script>
+</body>
+</html>
