@@ -9,8 +9,28 @@ import (
 	"github.com/alexs/golang_test/internal/models"
 	"github.com/alexs/golang_test/internal/repository"
 	"github.com/alexs/golang_test/internal/utils"
+	"github.com/alexs/golang_test/internal/websocket"
 	"github.com/go-chi/chi/v5"
 )
+
+// WebSocket hub for broadcasting updates
+var wsHub *websocket.Hub
+
+// SetWebSocketHub sets the WebSocket hub for broadcasting
+func SetWebSocketHub(hub *websocket.Hub) {
+	wsHub = hub
+}
+
+// broadcastUpdate is a helper to send availability updates
+func broadcastUpdate(eventID uint) {
+	if wsHub != nil {
+		event, err := repository.GetEventByID(eventID)
+		if err == nil {
+			available, _ := event.AvailableTickets(repository.DB)
+			wsHub.BroadcastAvailabilityUpdate(eventID, available, event.Capacity)
+		}
+	}
+}
 
 type BookTicketRequest struct {
 	EventID  uint `json:"event_id"`
@@ -60,6 +80,9 @@ func BookTicket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Broadcast availability update via WebSocket
+	broadcastUpdate(req.EventID)
+
 	utils.SuccessResponse(w, http.StatusCreated, completeBooking)
 }
 
@@ -95,6 +118,13 @@ func CancelBooking(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Get booking before cancellation to get event ID
+	booking, err := repository.GetBookingByID(uint(id))
+	if err != nil {
+		utils.ErrorResponse(w, http.StatusNotFound, "Booking not found")
+		return
+	}
+
 	if err := repository.CancelBooking(uint(id), claims.UserID); err != nil {
 		if err.Error() == "unauthorized to cancel this booking" {
 			utils.ErrorResponse(w, http.StatusForbidden, "You are not authorized to cancel this booking")
@@ -107,6 +137,9 @@ func CancelBooking(w http.ResponseWriter, r *http.Request) {
 		utils.ErrorResponse(w, http.StatusInternalServerError, "Failed to cancel booking")
 		return
 	}
+
+	// Broadcast availability update via WebSocket
+	broadcastUpdate(booking.EventID)
 
 	utils.SuccessResponse(w, http.StatusOK, map[string]string{"message": "Booking cancelled successfully"})
 }

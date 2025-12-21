@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/alexs/golang_test/internal/middleware"
 	"github.com/alexs/golang_test/internal/models"
 	"github.com/alexs/golang_test/internal/repository"
 	"github.com/alexs/golang_test/internal/utils"
@@ -54,10 +55,18 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := middleware.GetUserFromContext(r)
+	if user == nil {
+		utils.ErrorResponse(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+
 	event := models.Event{
 		Name:        req.Name,
 		Description: req.Description,
 		EventType:   req.EventType,
+		Status:      "published",
+		OrganizerID: user.UserID,
 		VenueName:   req.VenueName,
 		City:        req.City,
 		Address:     req.Address,

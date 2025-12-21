@@ -20,6 +20,9 @@ type Event struct {
 	Name        string    `json:"name" gorm:"not null"`
 	Description string    `json:"description"`
 	EventType   string    `json:"event_type"` // concert, tour, standup, lecture, musical, etc.
+	Status      string    `json:"status" gorm:"default:'published'"` // draft, published, cancelled
+	OrganizerID uint      `json:"organizer_id" gorm:"not null"`
+	Organizer   User      `json:"organizer,omitempty" gorm:"foreignKey:OrganizerID"`
 	VenueName   string    `json:"venue_name"`
 	City        string    `json:"city"`
 	Address     string    `json:"address"`

@@ -6,6 +6,7 @@
         <h1 class="nav-title">Ticket App</h1>
         <div class="nav-links">
           <NuxtLink to="/events" class="nav-link">Events</NuxtLink>
+          <NuxtLink v-if="isLoggedIn" to="/events/create" class="nav-link">Create Event</NuxtLink>
           <NuxtLink v-if="isLoggedIn" to="/profile" class="nav-link">Profile</NuxtLink>
           <a v-if="isLoggedIn" href="#" class="nav-link" @click.prevent="handleLogout">Logout</a>
           <NuxtLink v-else to="/" class="nav-link">Login</NuxtLink>

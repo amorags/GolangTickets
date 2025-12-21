@@ -5,14 +5,18 @@ import (
 
 	"github.com/alexs/golang_test/internal/handlers"
 	"github.com/alexs/golang_test/internal/middleware"
+	"github.com/alexs/golang_test/internal/websocket"
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 )
 
 // New returns the configured router with all routes and middleware
-func New() http.Handler {
+func New(hub *websocket.Hub) http.Handler {
 	r := chi.NewRouter()
+
+	// Initialize handlers with the WebSocket hub
+	handlers.SetWebSocketHub(hub)
 
 	// Global Middlewares
 	r.Use(chimiddleware.Logger)
@@ -43,6 +47,9 @@ func New() http.Handler {
 	// Public event routes (no auth required for browsing)
 	r.Get("/events", handlers.GetEvents)
 	r.Get("/events/{id}", handlers.GetEvent)
+
+	// WebSocket endpoint (auth via token query parameter)
+	r.Get("/ws", websocket.HandleWebSocket(hub))
 
 	// Protected Routes (auth required)
 	r.Group(func(r chi.Router) {

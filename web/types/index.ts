@@ -45,3 +45,30 @@ export interface ApiResponse<T> {
 export interface ApiError {
   error: string
 }
+
+export interface CreateEventRequest {
+  name: string
+  description: string
+  event_type: string
+  venue_name: string
+  city: string
+  address: string
+  date: string // ISO 8601 string
+  price: number
+  capacity: number
+  image_url: string
+}
+
+export interface WebSocketMessage {
+  type: string
+  event_id?: number
+  timestamp?: string
+  data?: any
+}
+
+export interface AvailabilityUpdate {
+  event_id: number
+  available_tickets: number
+  capacity: number
+  last_updated: string
+}

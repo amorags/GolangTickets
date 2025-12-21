@@ -86,6 +86,12 @@ export const useApi = () => {
 
   const getEvent = (id: number) => fetchWithAuth<Event>(`/events/${id}`)
 
+  const createEvent = (eventData: any) => 
+    fetchWithAuth<Event>('/events', {
+      method: 'POST',
+      body: JSON.stringify(eventData),
+    })
+
   // Bookings API
   const createBooking = (event_id: number, quantity: number) =>
     fetchWithAuth<Booking>('/bookings', {
@@ -106,6 +112,7 @@ export const useApi = () => {
     getProfile,
     getEvents,
     getEvent,
+    createEvent,
     createBooking,
     getMyBookings,
     cancelBooking,
