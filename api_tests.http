@@ -1,0 +1,29 @@
+### Global Variables
+@host = http://localhost:8080
+@authToken = {{login.response.body.data.token}}
+
+### 1. Sign Up (Create a new user)
+# @name signup
+POST {{host}}/auth/signup
+Content-Type: application/json
+
+{
+    "username": "jdoe",
+    "email": "jdoe@example.com",
+    "password": "securepassword123"
+}
+
+### 2. Login (Get JWT Token)
+# @name login
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "jdoe@example.com",
+    "password": "securepassword123"
+}
+
+### 3. Get Profile (Protected Route)
+# This uses the token captured from the login request above automatically
+GET {{host}}/profile
+Authorization: Bearer {{authToken}}

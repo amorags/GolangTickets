@@ -12,6 +12,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d ticket_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   api:
     build: .
@@ -25,7 +30,8 @@ services:
       DB_PORT: 5432
       JWT_SECRET: your-super-secret-jwt-key-change-this-in-production-min-32-chars
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 volumes:
   postgres_data:
