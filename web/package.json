@@ -11,12 +11,17 @@
     "test": "echo 'No tests yet' && exit 0"
   },
   "devDependencies": {
+    "@nuxtjs/tailwindcss": "^6.14.0",
     "typescript": "^5.7.2",
     "vue-tsc": "^2.1.10"
   },
   "dependencies": {
+    "@headlessui/vue": "^1.7.23",
+    "@heroicons/vue": "^2.2.0",
+    "@vueuse/core": "^14.1.0",
     "nuxt": "^4.2.2",
     "vue": "^3.5.25",
-    "vue-router": "^4.6.4"
+    "vue-router": "^4.6.4",
+    "vue-toastification": "^2.0.0-rc.5"
   }
 }

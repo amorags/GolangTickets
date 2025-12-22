@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans text-text antialiased min-h-screen;
+    background: linear-gradient(135deg, #FFF5F5 0%, #F0F4FF 100%);
+  }
+}
+
+/* Custom transitions that might not be easily covered by utilities */
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.3s;
+}
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}

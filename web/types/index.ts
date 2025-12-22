@@ -29,12 +29,12 @@ export interface Event {
 export interface Booking {
   ID: number
   event_id: number
-  event_name: string
   user_id: number
   quantity: number
   total_price: number
   status: 'confirmed' | 'cancelled'
   CreatedAt: string
+  event?: Event // Added optional event since it is preloaded
 }
 
 export interface ApiResponse<T> {
@@ -71,4 +71,29 @@ export interface AvailabilityUpdate {
   available_tickets: number
   capacity: number
   last_updated: string
+}
+
+export interface EventFilters {
+  search?: string
+  type?: string
+  city?: string
+  date_from?: string
+  date_to?: string
+  price_min?: number
+  price_max?: number
+  status?: string
+  page?: number
+  limit?: number
+  sort?: string
+  order?: 'asc' | 'desc'
+}
+
+export interface PaginatedEventsResponse {
+  events: Event[]
+  total: number
+  page: number
+  limit: number
+  total_pages: number
+  has_next: boolean
+  has_previous: boolean
 }

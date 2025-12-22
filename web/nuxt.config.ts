@@ -2,6 +2,10 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  css: ['~/assets/css/main.css'],
-  ssr: false, // Disable SSR for simplicity with localStorage
+  modules: ['@nuxtjs/tailwindcss'],
+  css: ['~/assets/css/tailwind.css'],
+  ssr: false,
+  build: {
+    transpile: ['@headlessui/vue', '@heroicons/vue', 'vue-toastification'],
+  },
 })

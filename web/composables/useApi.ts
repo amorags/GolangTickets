@@ -1,4 +1,4 @@
-import type { AuthResponse, User, Event, Booking, ApiResponse } from '~/types'
+import type { AuthResponse, User, Event, Booking, ApiResponse, EventFilters, PaginatedEventsResponse } from '~/types'
 
 const API_URL = 'http://localhost:8080'
 
@@ -82,7 +82,33 @@ export const useApi = () => {
   const getProfile = () => fetchWithAuth<User>('/profile')
 
   // Events API
-  const getEvents = () => fetchWithAuth<Event[]>('/events')
+  const getEvents = (filters?: EventFilters) => {
+    let endpoint = '/events'
+
+    if (filters) {
+      const params = new URLSearchParams()
+
+      if (filters.search) params.append('search', filters.search)
+      if (filters.type) params.append('type', filters.type)
+      if (filters.city) params.append('city', filters.city)
+      if (filters.date_from) params.append('date_from', filters.date_from)
+      if (filters.date_to) params.append('date_to', filters.date_to)
+      if (filters.price_min !== undefined) params.append('price_min', filters.price_min.toString())
+      if (filters.price_max !== undefined) params.append('price_max', filters.price_max.toString())
+      if (filters.status) params.append('status', filters.status)
+      if (filters.page) params.append('page', filters.page.toString())
+      if (filters.limit) params.append('limit', filters.limit.toString())
+      if (filters.sort) params.append('sort', filters.sort)
+      if (filters.order) params.append('order', filters.order)
+
+      const queryString = params.toString()
+      if (queryString) {
+        endpoint += `?${queryString}`
+      }
+    }
+
+    return fetchWithAuth<PaginatedEventsResponse>(endpoint)
+  }
 
   const getEvent = (id: number) => fetchWithAuth<Event>(`/events/${id}`)
 

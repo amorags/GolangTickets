@@ -1,7 +1,17 @@
 <template>
-  <div class="ws-status" :class="statusClass">
-    <span class="ws-status-dot"></span>
-    <span class="ws-status-text">{{ statusText }}</span>
+  <div 
+    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300 shadow-sm border"
+    :class="[
+      isConnected 
+        ? 'bg-accent/20 text-green-800 border-accent' 
+        : 'bg-error/10 text-red-800 border-error/30'
+    ]"
+  >
+    <span 
+      class="w-2 h-2 rounded-full animate-pulse"
+      :class="isConnected ? 'bg-green-500' : 'bg-red-500'"
+    ></span>
+    {{ isConnected ? 'Live Updates' : 'Offline' }}
   </div>
 </template>
 
@@ -9,59 +19,4 @@
 const props = defineProps<{
   isConnected: boolean
 }>()
-
-const statusClass = computed(() => {
-  return props.isConnected ? 'connected' : 'disconnected'
-})
-
-const statusText = computed(() => {
-  return props.isConnected ? 'Live' : 'Offline'
-})
 </script>
-
-<style scoped>
-.ws-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.ws-status.connected {
-  background-color: #d1fae5;
-  color: #065f46;
-}
-
-.ws-status.disconnected {
-  background-color: #fee2e2;
-  color: #991b1b;
-}
-
-.ws-status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  animation: pulse 2s ease-in-out infinite;
-}
-
-.ws-status.connected .ws-status-dot {
-  background-color: #10b981;
-}
-
-.ws-status.disconnected .ws-status-dot {
-  background-color: #ef4444;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-</style>
