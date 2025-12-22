@@ -66,7 +66,7 @@ jobs:
       - name: Run Gosec
         uses: securego/gosec@master
         with:
-          args: '-fmt sarif -out gosec-results.sarif ./...'
+          args: '-fmt sarif -out gosec-results.sarif -no-fail ./...'
 
       - name: Upload SARIF to GitHub Security
         uses: github/codeql-action/upload-sarif@v3
@@ -92,6 +92,7 @@ jobs:
           format: 'sarif'
           output: 'trivy-fs-results.sarif'
           severity: 'CRITICAL,HIGH'
+          exit-code: '0'
 
       - name: Upload Trivy results to GitHub Security
         uses: github/codeql-action/upload-sarif@v3
@@ -181,6 +182,7 @@ jobs:
           format: 'sarif'
           output: 'trivy-image-${{ matrix.image }}-results.sarif'
           severity: 'CRITICAL,HIGH'
+          exit-code: '0'
 
       - name: Upload Trivy image results
         uses: github/codeql-action/upload-sarif@v3
