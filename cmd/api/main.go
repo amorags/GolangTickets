@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -10,6 +11,7 @@ import (
 	"github.com/alexs/golang_test/internal/handlers"
 	"github.com/alexs/golang_test/internal/repository"
 	"github.com/alexs/golang_test/internal/router"
+	"github.com/alexs/golang_test/internal/seed"
 	"github.com/alexs/golang_test/internal/websocket"
 )
 
@@ -34,6 +36,19 @@ func main() {
 
 	// 2. Connect to Database
 	repository.ConnectDB()
+
+	// 2.5. Seed Database (if enabled)
+	if os.Getenv("SEED_DATABASE") == "true" {
+		log.Println("Database seeding enabled, checking seed status...")
+		forceReseed := os.Getenv("FORCE_RESEED") == "true"
+
+		if err := seed.Run(forceReseed); err != nil {
+			log.Printf("Warning: Database seeding failed: %v", err)
+			// Don't fatal - allow app to start even if seeding fails
+		} else {
+			log.Println("Database seeding completed successfully")
+		}
+	}
 
 	// 3. Initialize WebSocket Hub
 	hub := websocket.NewHub()

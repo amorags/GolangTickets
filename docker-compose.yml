@@ -29,6 +29,8 @@ services:
       DB_NAME: ticket_db
       DB_PORT: 5432
       JWT_SECRET: your-super-secret-jwt-key-change-this-in-production-min-32-chars
+      SEED_DATABASE: "true"
+      FORCE_RESEED: "false"
     depends_on:
       db:
         condition: service_healthy
