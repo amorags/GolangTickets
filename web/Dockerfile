@@ -1,4 +1,4 @@
-FROM oven/bun:1-alpine AS base
+FROM oven/bun:1.2.0-alpine AS base
 
 # Install dependencies
 FROM base AS deps
@@ -26,6 +26,11 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nuxt
 
 COPY --from=builder --chown=nuxt:nodejs /app/.output /app/.output
+
+# Metadata labels
+LABEL org.opencontainers.image.source="https://github.com/amorags/golangtickets"
+LABEL org.opencontainers.image.description="Nuxt web frontend for ticket booking system"
+LABEL org.opencontainers.image.licenses="MIT"
 
 USER nuxt
 

@@ -1,39 +1,79 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:16-alpine
     restart: always
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: ticket_db
+      POSTGRES_USER: ${DB_USER:-user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: ${DB_NAME:-ticket_db}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d ticket_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-user} -d ${DB_NAME:-ticket_db}"]
       interval: 5s
       timeout: 5s
       retries: 5
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+      - DAC_OVERRIDE
+      - FOWNER
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+          pids: 200
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    ulimits:
+      nproc: 512
+      nofile:
+        soft: 1024
+        hard: 2048
 
   api:
     build: .
     ports:
       - "8080:8080"
     environment:
-      DB_HOST: db
-      DB_USER: user
-      DB_PASSWORD: password
-      DB_NAME: ticket_db
-      DB_PORT: 5432
-      JWT_SECRET: your-super-secret-jwt-key-change-this-in-production-min-32-chars
-      SEED_DATABASE: "true"
-      FORCE_RESEED: "false"
+      DB_HOST: ${DB_HOST:-db}
+      DB_USER: ${DB_USER:-user}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      DB_NAME: ${DB_NAME:-ticket_db}
+      DB_PORT: ${DB_PORT:-5432}
+      JWT_SECRET: ${JWT_SECRET}
+      SEED_DATABASE: ${SEED_DATABASE:-true}
+      FORCE_RESEED: ${FORCE_RESEED:-false}
     depends_on:
       db:
         condition: service_healthy
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+          pids: 100
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    ulimits:
+      nproc: 256
+      nofile:
+        soft: 1024
+        hard: 2048
 
   web:
     build:
@@ -46,6 +86,24 @@ services:
     depends_on:
       - api
     restart: unless-stopped
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+          pids: 100
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+    ulimits:
+      nproc: 256
+      nofile:
+        soft: 1024
+        hard: 2048
 
 volumes:
   postgres_data:

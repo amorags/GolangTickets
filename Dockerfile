@@ -46,6 +46,11 @@ COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
 # Copy binary from builder
 COPY --from=builder /build/api /app/api
 
+# Metadata labels
+LABEL org.opencontainers.image.source="https://github.com/amorags/golangtickets"
+LABEL org.opencontainers.image.description="Go API for ticket booking system"
+LABEL org.opencontainers.image.licenses="MIT"
+
 # Use non-root user (distroless provides 'nonroot' user with UID 65532)
 USER nonroot:nonroot
 

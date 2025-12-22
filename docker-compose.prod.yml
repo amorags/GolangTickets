@@ -17,6 +17,30 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+      - DAC_OVERRIDE
+      - FOWNER
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    ulimits:
+      nproc: 1024
+      nofile:
+        soft: 2048
+        hard: 4096
+    pids_limit: 500
 
   api:
     image: ${API_IMAGE:-ghcr.io/your-username/golang_test/api:latest}
@@ -33,6 +57,24 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    ulimits:
+      nproc: 512
+      nofile:
+        soft: 2048
+        hard: 4096
+    pids_limit: 200
 
   web:
     image: ${WEB_IMAGE:-ghcr.io/your-username/golang_test/web:latest}
@@ -43,6 +85,24 @@ services:
       - NUXT_PUBLIC_API_BASE=${API_BASE_URL:-http://localhost:8080}
     depends_on:
       - api
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    ulimits:
+      nproc: 512
+      nofile:
+        soft: 2048
+        hard: 4096
+    pids_limit: 200
 
 volumes:
   postgres_data:
