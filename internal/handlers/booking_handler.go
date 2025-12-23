@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/alexs/golang_test/internal/middleware"
 	"github.com/alexs/golang_test/internal/models"
@@ -65,7 +66,7 @@ func BookTicket(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := repository.CreateBooking(&booking); err != nil {
-		if err.Error() == "not enough tickets available" {
+		if strings.Contains(err.Error(), "not enough tickets available") {
 			utils.ErrorResponse(w, http.StatusBadRequest, "Not enough tickets available")
 			return
 		}
@@ -126,11 +127,11 @@ func CancelBooking(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := repository.CancelBooking(uint(id), claims.UserID); err != nil {
-		if err.Error() == "unauthorized to cancel this booking" {
+		if strings.Contains(err.Error(), "unauthorized to cancel this booking") {
 			utils.ErrorResponse(w, http.StatusForbidden, "You are not authorized to cancel this booking")
 			return
 		}
-		if err.Error() == "booking is already cancelled" {
+		if strings.Contains(err.Error(), "booking is already cancelled") {
 			utils.ErrorResponse(w, http.StatusBadRequest, "Booking is already cancelled")
 			return
 		}
