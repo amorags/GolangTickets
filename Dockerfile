@@ -1,9 +1,14 @@
 # syntax=docker/dockerfile:1.4
 
-# ============================================ 
+# ============================================
 # Stage 1: Build Stage
-# ============================================ 
-FROM golang:1.25-alpine AS builder
+# ============================================
+# Use native platform for building (fast on AMD64 runners)
+FROM --platform=$BUILDPLATFORM golang:1.25-alpine AS builder
+
+# Build arguments to support cross-compilation
+ARG TARGETOS
+ARG TARGETARCH
 
 # Install build dependencies
 RUN apk add --no-cache git ca-certificates tzdata
@@ -25,7 +30,8 @@ COPY . .
 # CGO_ENABLED=0 - Static binary (no C dependencies)
 # -ldflags="-w -s" - Strip debug info (smaller binary)
 # -trimpath - Remove file system paths from binary
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+# Use TARGETOS and TARGETARCH for cross-compilation
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
     go build \
     -ldflags="-w -s -X main.version=${VERSION:-dev}" \
     -trimpath \
