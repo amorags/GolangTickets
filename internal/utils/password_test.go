@@ -57,10 +57,10 @@ func TestHashPassword_Uniqueness(t *testing.T) {
 // TestComparePassword tests password comparison
 func TestComparePassword(t *testing.T) {
 	tests := []struct {
-		name           string
-		password       string
-		compareWith    string
-		expectMatch    bool
+		name        string
+		password    string
+		compareWith string
+		expectMatch bool
 	}{
 		{
 			name:        "Correct Password",

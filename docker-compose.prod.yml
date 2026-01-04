@@ -43,7 +43,7 @@ services:
     pids_limit: 500
 
   api:
-    image: ${API_IMAGE:-ghcr.io/your-username/golang_test/api:latest}
+    image: ${API_IMAGE:-ghcr.io/amorags/golangtickets/api:latest}
     restart: always
     ports:
       - "8080:8080"
@@ -77,7 +77,7 @@ services:
     pids_limit: 200
 
   web:
-    image: ${WEB_IMAGE:-ghcr.io/your-username/golang_test/web:latest}
+    image: ${WEB_IMAGE:-ghcr.io/amorags/golangtickets/web:latest}
     restart: always
     ports:
       - "3000:3000"

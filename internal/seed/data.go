@@ -76,12 +76,12 @@ var venueTypes = map[string][]string{
 
 // priceRanges defines min and max price ranges for each event type
 var priceRanges = map[string][2]float64{
-	"concert":  {25.0, 200.0},
-	"tour":     {40.0, 150.0},
-	"standup":  {15.0, 75.0},
-	"lecture":  {0.0, 50.0},
-	"musical":  {30.0, 180.0},
-	"other":    {0.0, 100.0},
+	"concert": {25.0, 200.0},
+	"tour":    {40.0, 150.0},
+	"standup": {15.0, 75.0},
+	"lecture": {0.0, 50.0},
+	"musical": {30.0, 180.0},
+	"other":   {0.0, 100.0},
 }
 
 // concertDescriptors for generating concert names
@@ -176,10 +176,10 @@ var musicalNames = []string{
 
 // eventTypeDistribution defines how many events of each type to create
 var eventTypeDistribution = map[string]int{
-	"concert":  60, // 30%
-	"standup":  40, // 20%
-	"tour":     30, // 15%
-	"musical":  25, // 12.5%
-	"lecture":  25, // 12.5%
-	"other":    20, // 10%
+	"concert": 60, // 30%
+	"standup": 40, // 20%
+	"tour":    30, // 15%
+	"musical": 25, // 12.5%
+	"lecture": 25, // 12.5%
+	"other":   20, // 10%
 }

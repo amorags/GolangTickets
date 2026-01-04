@@ -19,7 +19,7 @@ type Event struct {
 	gorm.Model
 	Name        string    `json:"name" gorm:"not null"`
 	Description string    `json:"description"`
-	EventType   string    `json:"event_type"` // concert, tour, standup, lecture, musical, etc.
+	EventType   string    `json:"event_type"`                        // concert, tour, standup, lecture, musical, etc.
 	Status      string    `json:"status" gorm:"default:'published'"` // draft, published, cancelled
 	OrganizerID uint      `json:"organizer_id" gorm:"not null"`
 	Organizer   User      `json:"organizer,omitempty" gorm:"foreignKey:OrganizerID"`
@@ -51,12 +51,12 @@ func (e *Event) AvailableTickets(db *gorm.DB) (int, error) {
 // Booking represents a user's ticket booking for an event
 type Booking struct {
 	gorm.Model
-	UserID      uint    `json:"user_id" gorm:"not null"`
-	EventID     uint    `json:"event_id" gorm:"not null"`
-	Quantity    int     `json:"quantity" gorm:"not null"`
+	UserID         uint    `json:"user_id" gorm:"not null"`
+	EventID        uint    `json:"event_id" gorm:"not null"`
+	Quantity       int     `json:"quantity" gorm:"not null"`
 	PricePerTicket float64 `json:"price_per_ticket"`
-	TotalPrice  float64 `json:"total_price"`
-	Status      string  `json:"status" gorm:"default:'confirmed'"` // confirmed, cancelled
-	User        User    `json:"user,omitempty" gorm:"foreignKey:UserID"`
-	Event       Event   `json:"event,omitempty" gorm:"foreignKey:EventID"`
+	TotalPrice     float64 `json:"total_price"`
+	Status         string  `json:"status" gorm:"default:'confirmed'"` // confirmed, cancelled
+	User           User    `json:"user,omitempty" gorm:"foreignKey:UserID"`
+	Event          Event   `json:"event,omitempty" gorm:"foreignKey:EventID"`
 }

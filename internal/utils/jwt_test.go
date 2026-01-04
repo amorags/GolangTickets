@@ -66,11 +66,11 @@ func TestValidateJWT(t *testing.T) {
 	}
 
 	tests := []struct {
-		name          string
-		userID        uint
-		username      string
-		email         string
-		expectValid   bool
+		name        string
+		userID      uint
+		username    string
+		email       string
+		expectValid bool
 	}{
 		{
 			name:        "Valid Token",

@@ -10,11 +10,11 @@ import (
 )
 
 const (
-	totalUsers      = 175
-	organizerCount  = 25
-	regularUsers    = totalUsers - organizerCount
-	totalEvents     = 200
-	sentinelEmail   = "seed-marker@ticketdb.system"
+	totalUsers     = 175
+	organizerCount = 25
+	regularUsers   = totalUsers - organizerCount
+	totalEvents    = 200
+	sentinelEmail  = "seed-marker@ticketdb.system"
 )
 
 // IsDatabaseSeeded checks if the database has already been seeded
