@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:16-alpine
@@ -32,6 +30,7 @@ services:
         limits:
           cpus: '2.0'
           memory: 1G
+          pids: 500
         reservations:
           cpus: '0.5'
           memory: 256M
@@ -40,7 +39,6 @@ services:
       nofile:
         soft: 2048
         hard: 4096
-    pids_limit: 500
 
   api:
     image: ${API_IMAGE:-ghcr.io/amorags/golangtickets/api:latest}
@@ -54,6 +52,8 @@ services:
       DB_NAME: ${DB_NAME:-ticket_db}
       DB_PORT: 5432
       JWT_SECRET: ${JWT_SECRET}
+      SEED_DATABASE: ${SEED_DATABASE:-true}
+      FORCE_RESEED: ${FORCE_RESEED:-false}
     depends_on:
       db:
         condition: service_healthy
@@ -66,6 +66,7 @@ services:
         limits:
           cpus: '1.0'
           memory: 512M
+          pids: 200
         reservations:
           cpus: '0.25'
           memory: 128M
@@ -74,7 +75,6 @@ services:
       nofile:
         soft: 2048
         hard: 4096
-    pids_limit: 200
 
   web:
     image: ${WEB_IMAGE:-ghcr.io/amorags/golangtickets/web:latest}
@@ -94,6 +94,7 @@ services:
         limits:
           cpus: '1.0'
           memory: 1G
+          pids: 200
         reservations:
           cpus: '0.25'
           memory: 256M
@@ -102,7 +103,6 @@ services:
       nofile:
         soft: 2048
         hard: 4096
-    pids_limit: 200
 
 volumes:
   postgres_data:

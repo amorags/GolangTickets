@@ -107,6 +107,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
     strategy:
       matrix:
         include:
@@ -142,6 +143,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push
+        id: build-push
         uses: docker/build-push-action@v5
         with:
           context: ${{ matrix.context }}
@@ -154,6 +156,22 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             VERSION=${{ github.sha }}
+
+      - name: Install Cosign
+        if: github.event_name != 'pull_request'
+        uses: sigstore/cosign-installer@v3
+
+      - name: Sign container image
+        if: github.event_name != 'pull_request'
+        env:
+          DIGEST: ${{ steps.build-push.outputs.digest }}
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          images=""
+          for tag in ${TAGS}; do
+            images+="${tag}@${DIGEST} "
+          done
+          cosign sign --yes ${images}
 
   trivy-image:
     name: Security Scan - Trivy Images
