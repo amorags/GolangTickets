@@ -1,21 +1,7 @@
 # syntax=docker/dockerfile:1.4
 
 # ============================================
-# Stage 1: Dependencies
-# ============================================
-FROM --platform=$BUILDPLATFORM golang:1.25-alpine AS deps
-
-WORKDIR /build
-
-# Copy dependency files first (better layer caching)
-COPY go.mod go.sum ./
-
-# Download dependencies with cache mount for faster rebuilds
-RUN --mount=type=cache,target=/go/pkg/mod \
-    go mod download && go mod verify
-
-# ============================================
-# Stage 2: Build Stage
+# Stage 1: Build Stage
 # ============================================
 FROM --platform=$BUILDPLATFORM golang:1.25-alpine AS builder
 
@@ -26,9 +12,12 @@ ARG VERSION
 
 WORKDIR /build
 
-# Copy go.mod/go.sum and pre-downloaded modules from deps stage
-COPY --from=deps /go/pkg/mod /go/pkg/mod
+# Copy dependency files first (better layer caching)
 COPY go.mod go.sum ./
+
+# Download dependencies with cache mount for faster rebuilds
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go mod download && go mod verify
 
 # Copy source code
 COPY . .
@@ -47,7 +36,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     ./cmd/api
 
 # ============================================
-# Stage 3: Runtime Stage (Distroless)
+# Stage 2: Runtime Stage (Distroless)
 # ============================================
 FROM gcr.io/distroless/static-debian12:nonroot
 
