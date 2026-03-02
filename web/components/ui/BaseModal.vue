@@ -1,6 +1,7 @@
 <template>
   <TransitionRoot appear :show="isOpen" as="template">
     <Dialog as="div" @close="close" class="relative z-50">
+      <!-- Backdrop -->
       <TransitionChild
         as="template"
         enter="duration-300 ease-out"
@@ -10,33 +11,34 @@
         leave-from="opacity-100"
         leave-to="opacity-0"
       >
-        <div class="fixed inset-0 bg-black/25 backdrop-blur-sm" />
+        <div class="fixed inset-0 bg-dark/80 backdrop-blur-md" />
       </TransitionChild>
 
       <div class="fixed inset-0 overflow-y-auto">
-        <div
-          class="flex min-h-full items-center justify-center p-4 text-center"
-        >
+        <div class="flex min-h-full items-center justify-center p-4 text-center">
           <TransitionChild
             as="template"
             enter="duration-300 ease-out"
-            enter-from="opacity-0 scale-95"
-            enter-to="opacity-100 scale-100"
+            enter-from="opacity-0 scale-95 -translate-y-4"
+            enter-to="opacity-100 scale-100 translate-y-0"
             leave="duration-200 ease-in"
-            leave-from="opacity-100 scale-100"
-            leave-to="opacity-0 scale-95"
+            leave-from="opacity-100 scale-100 translate-y-0"
+            leave-to="opacity-0 scale-95 -translate-y-4"
           >
             <DialogPanel
-              class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all border border-secondary/20"
+              class="w-full max-w-md transform overflow-hidden rounded-2xl glass-card p-6 text-left align-middle transition-all"
             >
+              <!-- Decorative top line -->
+              <div class="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
+              
               <DialogTitle
                 as="h3"
-                class="text-lg font-bold leading-6 text-text"
+                class="text-lg font-display font-bold text-text"
               >
                 {{ title }}
               </DialogTitle>
-              <div class="mt-2">
-                <p class="text-sm text-text-light">
+              <div class="mt-3">
+                <p class="text-sm text-text-light leading-relaxed">
                   {{ description }}
                 </p>
               </div>
@@ -45,7 +47,7 @@
                 <slot name="footer">
                   <button
                     type="button"
-                    class="inline-flex justify-center rounded-xl border border-transparent bg-secondary/20 px-4 py-2 text-sm font-medium text-text hover:bg-secondary/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 transition-colors"
+                    class="btn-ghost text-sm"
                     @click="close"
                   >
                     Close

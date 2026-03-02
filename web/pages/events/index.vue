@@ -1,89 +1,133 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
       <div>
-        <h2 class="text-3xl font-bold text-gray-900">Upcoming Events</h2>
-        <p class="text-gray-500 mt-1">
-          {{ paginationData?.total || 0 }} events found
+        <h1 class="text-4xl font-display font-bold text-gradient mb-2">
+          Upcoming Events
+        </h1>
+        <p class="text-text-light flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-success animate-pulse"></span>
+          {{ paginationData?.total || 0 }} events available
         </p>
       </div>
       <WebSocketStatus :isConnected="ws.isConnected.value" />
     </div>
 
+    <!-- Loading State -->
     <div v-if="pending" class="flex justify-center py-20">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div class="relative">
+        <div class="w-16 h-16 spinner-cyber"></div>
+        <div class="absolute inset-0 w-16 h-16 rounded-full border-2 border-primary/20"></div>
+      </div>
     </div>
 
-    <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
-      <p class="text-red-600">Failed to load events: {{ error.message }}</p>
-      <button @click="refresh()" class="mt-4 px-6 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors">
-        Retry
+    <!-- Error State -->
+    <div v-else-if="error" class="glass-card p-8 text-center">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-error/10 flex items-center justify-center">
+        <ExclamationTriangleIcon class="w-8 h-8 text-error" />
+      </div>
+      <p class="text-error mb-4">Failed to load events: {{ error.message }}</p>
+      <button @click="refresh()" class="btn-ghost border-error/30 text-error hover:bg-error/10">
+        Try Again
       </button>
     </div>
 
-    <div v-else-if="events?.length === 0" class="bg-gray-50 border border-gray-200 rounded-2xl p-12 text-center">
-      <p class="text-gray-500 text-lg">No events found matching your criteria.</p>
-      <button @click="clearFilters" class="mt-4 px-6 py-2 bg-primary text-white rounded-xl hover:bg-primary-dark transition-colors">
+    <!-- Empty State -->
+    <div v-else-if="events?.length === 0" class="glass-card p-12 text-center">
+      <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-surface-light flex items-center justify-center">
+        <CalendarDaysIcon class="w-10 h-10 text-text-muted" />
+      </div>
+      <h3 class="text-xl font-bold text-text mb-2">No events found</h3>
+      <p class="text-text-light mb-6">Try adjusting your filters or check back later</p>
+      <button @click="clearFilters" class="btn-neon">
         Clear Filters
       </button>
     </div>
 
+    <!-- Events Grid -->
     <div v-else>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <div
-        v-for="event in events"
-        :key="event.ID"
-        class="group bg-white rounded-3xl overflow-hidden shadow-lg shadow-gray-100 hover:shadow-xl hover:shadow-primary/10 border border-gray-100 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-        @click="router.push(`/events/${event.ID}`)"
-      >
-        <div class="relative h-48 overflow-hidden">
-          <div class="absolute inset-0 bg-gray-200 animate-pulse" v-if="!event.image_url"></div>
-          <img 
-            v-if="event.image_url"
-            :src="event.image_url" 
-            :alt="event.name"
-            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            loading="lazy"
-          />
-          <div class="absolute top-4 left-4">
-            <span class="px-3 py-1 rounded-full bg-white/90 backdrop-blur text-xs font-bold uppercase tracking-wider text-gray-800 shadow-sm">
-              {{ event.event_type }}
-            </span>
-          </div>
-        </div>
-        
-        <div class="p-6">
-          <h3 class="text-xl font-bold text-gray-900 mb-2 line-clamp-1 group-hover:text-primary transition-colors">
-            {{ event.name }}
-          </h3>
-          
-          <div class="space-y-2 mb-4">
-            <div class="flex items-center text-gray-500 text-sm">
-              <CalendarIcon class="w-4 h-4 mr-2" />
-              {{ formatDate(event.date) }}
-            </div>
-            <div class="flex items-center text-gray-500 text-sm">
-              <MapPinIcon class="w-4 h-4 mr-2" />
-              {{ event.venue_name }}, {{ event.city }}
-            </div>
-          </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+          v-for="(event, index) in events"
+          :key="event.ID"
+          class="stagger-item"
+          :style="{ animationDelay: `${index * 0.05}s` }"
+        >
+          <NuxtLink 
+            :to="`/events/${event.ID}`"
+            class="block glass-card overflow-hidden card-hover group"
+          >
+            <!-- Image -->
+            <div class="relative h-52 overflow-hidden">
+              <div class="absolute inset-0 bg-dark-50 animate-pulse" v-if="!event.image_url"></div>
+              <img 
+                v-if="event.image_url"
+                :src="event.image_url" 
+                :alt="event.name"
+                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                loading="lazy"
+              />
+              <!-- Gradient overlay -->
+              <div class="absolute inset-0 bg-gradient-to-t from-dark via-transparent to-transparent opacity-60"></div>
+              
+              <!-- Event type badge -->
+              <div class="absolute top-4 left-4">
+                <span class="tag-cyber">
+                  {{ event.event_type }}
+                </span>
+              </div>
 
-          <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-            <div class="flex flex-col">
-              <span class="text-xs text-gray-400 font-medium uppercase">Price</span>
-              <span class="text-lg font-bold text-primary">${{ event.price.toFixed(2) }}</span>
-            </div>
-            <div class="text-right">
-              <span class="text-xs text-gray-400 font-medium uppercase">Availability</span>
-              <div class="flex items-center gap-1 font-medium" :class="getAvailabilityColor(getAvailableTickets(event.ID), event.capacity)">
-                {{ getAvailableTickets(event.ID) }} / {{ event.capacity }}
+              <!-- Price badge -->
+              <div class="absolute top-4 right-4">
+                <div class="px-3 py-1.5 rounded-lg bg-dark-100/80 backdrop-blur-sm border border-surface-border">
+                  <span class="text-lg font-bold text-gradient">${{ event.price.toFixed(2) }}</span>
+                </div>
               </div>
             </div>
-          </div>
+            
+            <!-- Content -->
+            <div class="p-5">
+              <h3 class="text-lg font-bold text-text mb-3 line-clamp-1 group-hover:text-primary transition-colors">
+                {{ event.name }}
+              </h3>
+              
+              <div class="space-y-2 mb-4">
+                <div class="flex items-center text-text-light text-sm">
+                  <CalendarIcon class="w-4 h-4 mr-2 text-primary" />
+                  {{ formatDate(event.date) }}
+                </div>
+                <div class="flex items-center text-text-light text-sm">
+                  <MapPinIcon class="w-4 h-4 mr-2 text-secondary" />
+                  <span class="truncate">{{ event.venue_name }}, {{ event.city }}</span>
+                </div>
+              </div>
+
+              <!-- Availability bar -->
+              <div class="pt-4 border-t border-surface-border">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs text-text-muted uppercase tracking-wider">Availability</span>
+                  <span 
+                    class="text-sm font-bold"
+                    :class="getAvailabilityColor(getAvailableTickets(event.ID), event.capacity)"
+                  >
+                    {{ getAvailableTickets(event.ID) }} / {{ event.capacity }}
+                  </span>
+                </div>
+                <div class="h-1.5 bg-dark-100 rounded-full overflow-hidden">
+                  <div 
+                    class="h-full rounded-full transition-all duration-500"
+                    :class="getAvailabilityBarColor(getAvailableTickets(event.ID), event.capacity)"
+                    :style="{ width: `${(getAvailableTickets(event.ID) / event.capacity) * 100}%` }"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </NuxtLink>
         </div>
       </div>
-      </div>
 
+      <!-- Pagination -->
       <Pagination
         v-if="paginationData"
         :page="paginationData.page"
@@ -100,7 +144,7 @@
 
 <script setup lang="ts">
 import type { Event, AvailabilityUpdate, EventFilters, PaginatedEventsResponse } from '~/types'
-import { CalendarIcon, MapPinIcon } from '@heroicons/vue/24/outline'
+import { CalendarIcon, MapPinIcon, ExclamationTriangleIcon, CalendarDaysIcon } from '@heroicons/vue/24/outline'
 
 const api = useApi()
 const router = useRouter()
@@ -174,9 +218,16 @@ const formatDate = (dateString: string) => {
 
 const getAvailabilityColor = (available: number, capacity: number) => {
   const ratio = available / capacity
-  if (ratio < 0.1) return 'text-red-500'
-  if (ratio < 0.3) return 'text-yellow-600'
-  return 'text-green-600'
+  if (ratio < 0.1) return 'text-error'
+  if (ratio < 0.3) return 'text-warning'
+  return 'text-success'
+}
+
+const getAvailabilityBarColor = (available: number, capacity: number) => {
+  const ratio = available / capacity
+  if (ratio < 0.1) return 'bg-gradient-to-r from-error to-error/60'
+  if (ratio < 0.3) return 'bg-gradient-to-r from-warning to-warning/60'
+  return 'bg-gradient-to-r from-success to-success/60'
 }
 
 const handlePageChange = (page: number) => {

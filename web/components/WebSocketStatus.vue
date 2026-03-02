@@ -1,22 +1,18 @@
 <template>
   <div 
-    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300 shadow-sm border"
-    :class="[
-      isConnected 
-        ? 'bg-accent/20 text-green-800 border-accent' 
-        : 'bg-error/10 text-red-800 border-error/30'
-    ]"
+    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-300"
+    :class="isConnected ? 'bg-success/10 text-success border border-success/20' : 'bg-error/10 text-error border border-error/20'"
   >
     <span 
-      class="w-2 h-2 rounded-full animate-pulse"
-      :class="isConnected ? 'bg-green-500' : 'bg-red-500'"
+      class="w-2 h-2 rounded-full transition-all duration-300"
+      :class="isConnected ? 'bg-success animate-pulse shadow-glow-sm' : 'bg-error'"
     ></span>
-    {{ isConnected ? 'Live Updates' : 'Offline' }}
+    <span>{{ isConnected ? 'Live' : 'Offline' }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   isConnected: boolean
 }>()
 </script>

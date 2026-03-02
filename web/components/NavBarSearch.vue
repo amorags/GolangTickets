@@ -1,13 +1,13 @@
 <template>
   <div class="relative flex items-center gap-2" ref="containerRef">
     <!-- Search Bar -->
-    <div class="relative group">
-      <MagnifyingGlassIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-primary transition-colors" />
+    <div class="relative group flex-1">
+      <MagnifyingGlassIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-muted group-focus-within:text-primary transition-colors" />
       <input
         v-model="filters.search"
         type="text"
-        placeholder="Search..."
-        class="w-48 sm:w-64 pl-9 pr-4 py-2 text-sm rounded-full bg-gray-100 border-none focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all shadow-inner"
+        placeholder="Search events..."
+        class="w-48 sm:w-64 pl-9 pr-4 py-2 text-sm rounded-xl bg-dark-50 border border-surface-border text-text placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
         @input="debouncedSearch"
         @keydown.enter="applyFilters"
       />
@@ -16,41 +16,47 @@
     <!-- Filter Toggle Button -->
     <button
       @click="showFilters = !showFilters"
-      class="p-2 rounded-full border border-gray-200 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all relative"
-      :class="{ 'bg-primary/5 border-primary text-primary': showFilters || hasActiveFilters }"
+      class="p-2 rounded-xl border border-surface-border hover:border-primary hover:text-primary hover:bg-primary/5 transition-all relative"
+      :class="{ 'bg-primary/10 border-primary text-primary shadow-glow-sm': showFilters || hasActiveFilters }"
       title="Filters"
     >
       <FunnelIcon class="w-5 h-5" />
-      <span v-if="hasActiveFilters" class="absolute top-0 right-0 w-2.5 h-2.5 bg-primary rounded-full border-2 border-white"></span>
+      <span 
+        v-if="hasActiveFilters" 
+        class="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full border-2 border-dark animate-pulse"
+      ></span>
     </button>
 
     <!-- Filter Dropdown -->
     <transition
       enter-active-class="transition duration-200 ease-out"
-      enter-from-class="transform scale-95 opacity-0"
-      enter-to-class="transform scale-100 opacity-100"
+      enter-from-class="transform scale-95 opacity-0 -translate-y-2"
+      enter-to-class="transform scale-100 opacity-100 translate-y-0"
       leave-active-class="transition duration-150 ease-in"
-      leave-from-class="transform scale-100 opacity-100"
-      leave-to-class="transform scale-95 opacity-0"
+      leave-from-class="transform scale-100 opacity-100 translate-y-0"
+      leave-to-class="transform scale-95 opacity-0 -translate-y-2"
     >
       <div
         v-if="showFilters"
-        class="absolute top-full right-0 mt-3 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-gray-100 p-5 z-50 origin-top-right"
+        class="absolute top-full right-0 mt-3 w-80 sm:w-96 glass-card p-5 z-50"
       >
         <div class="space-y-4">
-          <div class="flex justify-between items-center pb-2 border-b border-gray-100">
-            <h3 class="font-bold text-gray-900">Filters</h3>
-            <button @click="clearFilters" class="text-xs text-primary hover:text-primary-dark font-medium">
+          <div class="flex justify-between items-center pb-3 border-b border-surface-border">
+            <h3 class="font-bold text-text flex items-center gap-2">
+              <AdjustmentsHorizontalIcon class="w-4 h-4 text-primary" />
+              Filters
+            </h3>
+            <button @click="clearFilters" class="text-xs text-primary hover:text-primary-light font-medium transition-colors">
               Reset all
             </button>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div class="col-span-2">
-              <label class="block text-xs font-medium text-gray-500 mb-1.5">Event Type</label>
+              <label class="block text-xs font-medium text-text-muted mb-2">Event Type</label>
               <select
                 v-model="filters.type"
-                class="w-full px-3 py-2 text-sm rounded-lg bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                class="input-cyber text-sm"
                 @change="applyFilters"
               >
                 <option value="">All Types</option>
@@ -64,59 +70,59 @@
             </div>
 
             <div class="col-span-2">
-              <label class="block text-xs font-medium text-gray-500 mb-1.5">City</label>
+              <label class="block text-xs font-medium text-text-muted mb-2">City</label>
               <input
                 v-model="filters.city"
                 type="text"
                 placeholder="Any city"
-                class="w-full px-3 py-2 text-sm rounded-lg bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                class="input-cyber text-sm"
                 @change="applyFilters"
               />
             </div>
 
             <div>
-              <label class="block text-xs font-medium text-gray-500 mb-1.5">From</label>
+              <label class="block text-xs font-medium text-text-muted mb-2">From</label>
               <input
                 v-model="filters.date_from"
                 type="date"
-                class="w-full px-3 py-2 text-sm rounded-lg bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                class="input-cyber text-sm"
                 @change="applyFilters"
               />
             </div>
 
             <div>
-              <label class="block text-xs font-medium text-gray-500 mb-1.5">To</label>
+              <label class="block text-xs font-medium text-text-muted mb-2">To</label>
               <input
                 v-model="filters.date_to"
                 type="date"
-                class="w-full px-3 py-2 text-sm rounded-lg bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                class="input-cyber text-sm"
                 @change="applyFilters"
               />
             </div>
 
             <div class="col-span-2">
-              <label class="block text-xs font-medium text-gray-500 mb-1.5">Price Range</label>
+              <label class="block text-xs font-medium text-text-muted mb-2">Price Range</label>
               <div class="flex items-center gap-2">
                 <div class="relative flex-1">
-                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs">$</span>
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-xs">$</span>
                   <input
                     v-model.number="filters.price_min"
                     type="number"
                     min="0"
                     placeholder="Min"
-                    class="w-full pl-6 pr-2 py-2 text-sm rounded-lg bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                    class="input-cyber text-sm pl-6"
                     @change="applyFilters"
                   />
                 </div>
-                <span class="text-gray-400">-</span>
+                <span class="text-text-muted">—</span>
                 <div class="relative flex-1">
-                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs">$</span>
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-xs">$</span>
                   <input
                     v-model.number="filters.price_max"
                     type="number"
                     min="0"
                     placeholder="Max"
-                    class="w-full pl-6 pr-2 py-2 text-sm rounded-lg bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                    class="input-cyber text-sm pl-6"
                     @change="applyFilters"
                   />
                 </div>
@@ -127,7 +133,7 @@
           <div class="pt-2">
             <button 
               @click="applyFilters(); showFilters = false" 
-              class="w-full py-2 bg-primary text-white rounded-lg font-medium text-sm hover:bg-primary-dark transition-colors"
+              class="btn-neon w-full py-2.5 text-sm"
             >
               Apply Filters
             </button>
@@ -139,7 +145,7 @@
 </template>
 
 <script setup lang="ts">
-import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/vue/24/outline'
+import { MagnifyingGlassIcon, FunnelIcon, AdjustmentsHorizontalIcon } from '@heroicons/vue/24/outline'
 import { useDebounceFn, onClickOutside } from '@vueuse/core'
 
 const router = useRouter()

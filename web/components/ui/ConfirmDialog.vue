@@ -3,15 +3,17 @@
     <template #footer>
       <button
         type="button"
-        class="inline-flex justify-center rounded-xl border border-transparent bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 transition-colors"
+        class="btn-ghost text-sm"
         @click="cancel"
       >
         Cancel
       </button>
       <button
         type="button"
-        class="inline-flex justify-center rounded-xl border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 transition-colors"
-        :class="isDanger ? 'bg-error hover:bg-error/90 focus-visible:ring-error' : 'bg-primary hover:bg-primary-dark focus-visible:ring-primary'"
+        class="text-sm font-bold px-5 py-2.5 rounded-xl transition-all duration-300"
+        :class="isDanger 
+          ? 'bg-error/20 text-error border border-error/30 hover:bg-error/30 hover:shadow-glow-pink' 
+          : 'btn-neon'"
         @click="confirm"
       >
         {{ confirmText }}

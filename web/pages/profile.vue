@@ -1,11 +1,16 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="flex items-center justify-between mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">My Account</h1>
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-10">
+      <div>
+        <h1 class="text-4xl font-display font-bold text-gradient mb-2">My Account</h1>
+        <p class="text-text-light">Manage your profile and bookings</p>
+      </div>
       <button 
         @click="handleLogout"
-        class="text-error hover:text-error/80 font-medium text-sm flex items-center gap-2"
+        class="btn-ghost border-error/30 text-error hover:bg-error/10 flex items-center gap-2"
       >
+        <ArrowRightOnRectangleIcon class="w-4 h-4" />
         Sign out
       </button>
     </div>
@@ -13,25 +18,44 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Left Column: User Profile -->
       <div class="lg:col-span-1 space-y-6">
-        <div class="bg-white rounded-3xl p-6 shadow-lg border border-gray-100">
-          <div class="flex items-center gap-4 mb-6">
-            <div class="w-16 h-16 rounded-full bg-gradient-to-br from-secondary to-secondary-dark flex items-center justify-center text-white text-2xl font-bold">
+        <!-- Profile Card -->
+        <div class="glass-card p-6 text-center">
+          <div class="relative inline-block mb-4">
+            <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center text-white text-4xl font-bold shadow-glow">
               {{ user?.username.charAt(0).toUpperCase() }}
             </div>
-            <div>
-              <h2 class="text-xl font-bold text-gray-900">{{ user?.username }}</h2>
-              <p class="text-gray-500 text-sm">Member since {{ formatDate(user?.created_at) }}</p>
+            <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-success border-4 border-dark flex items-center justify-center">
+              <CheckIcon class="w-3 h-3 text-white" />
             </div>
           </div>
-          
+          <h2 class="text-xl font-bold text-text mb-1">{{ user?.username }}</h2>
+          <p class="text-text-light text-sm">Member since {{ formatDate(user?.created_at) }}</p>
+        </div>
+
+        <!-- Stats Card -->
+        <div class="glass-card p-6">
+          <h3 class="text-sm font-bold text-text-muted uppercase tracking-wider mb-4">Account Stats</h3>
           <div class="space-y-4">
-            <div class="p-4 bg-gray-50 rounded-2xl">
-              <p class="text-xs text-gray-400 font-medium uppercase mb-1">Email Address</p>
-              <p class="font-medium text-gray-900">{{ user?.email }}</p>
+            <div class="flex items-center justify-between p-3 rounded-xl bg-dark-50 border border-surface-border">
+              <div class="flex items-center gap-3">
+                <EnvelopeIcon class="w-5 h-5 text-primary" />
+                <span class="text-sm text-text-light">Email</span>
+              </div>
+              <span class="text-sm text-text truncate max-w-[150px]">{{ user?.email }}</span>
             </div>
-            <div class="p-4 bg-gray-50 rounded-2xl">
-              <p class="text-xs text-gray-400 font-medium uppercase mb-1">User ID</p>
-              <p class="font-medium text-gray-900">#{{ user?.id }}</p>
+            <div class="flex items-center justify-between p-3 rounded-xl bg-dark-50 border border-surface-border">
+              <div class="flex items-center gap-3">
+                <IdentificationIcon class="w-5 h-5 text-secondary" />
+                <span class="text-sm text-text-light">User ID</span>
+              </div>
+              <span class="text-sm text-text">#{{ user?.id }}</span>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-xl bg-dark-50 border border-surface-border">
+              <div class="flex items-center gap-3">
+                <TicketIcon class="w-5 h-5 text-accent" />
+                <span class="text-sm text-text-light">Bookings</span>
+              </div>
+              <span class="text-sm font-bold text-text">{{ bookings.length }}</span>
             </div>
           </div>
         </div>
@@ -39,75 +63,95 @@
 
       <!-- Right Column: Bookings -->
       <div class="lg:col-span-2 space-y-6">
-        <h2 class="text-2xl font-bold text-gray-900">My Bookings</h2>
-
-        <div v-if="bookingsPending" class="flex justify-center py-12">
-          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
-
-        <div v-else-if="bookingsError" class="bg-red-50 p-6 rounded-2xl border border-red-100 text-red-600">
-          Failed to load bookings.
-        </div>
-
-        <div v-else-if="bookings.length === 0" class="bg-white rounded-3xl p-12 text-center border border-gray-100 shadow-sm">
-          <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <TicketIcon class="w-8 h-8 text-gray-400" />
-          </div>
-          <h3 class="text-lg font-bold text-gray-900 mb-2">No bookings yet</h3>
-          <p class="text-gray-500 mb-6">You haven't booked any events yet.</p>
-          <NuxtLink to="/events" class="px-6 py-2 bg-primary text-white rounded-xl font-bold shadow-md hover:bg-primary-dark transition-colors">
+        <div class="flex items-center justify-between">
+          <h2 class="text-2xl font-display font-bold text-text">My Bookings</h2>
+          <NuxtLink to="/events" class="btn-ghost text-sm">
             Browse Events
           </NuxtLink>
         </div>
 
+        <!-- Loading State -->
+        <div v-if="bookingsPending" class="flex justify-center py-12">
+          <div class="w-12 h-12 spinner-cyber"></div>
+        </div>
+
+        <!-- Error State -->
+        <div v-else-if="bookingsError" class="glass-card p-8 text-center">
+          <ExclamationTriangleIcon class="w-12 h-12 text-error mx-auto mb-4" />
+          <p class="text-error">Failed to load bookings</p>
+        </div>
+
+        <!-- Empty State -->
+        <div v-else-if="bookings.length === 0" class="glass-card p-12 text-center">
+          <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-surface-light flex items-center justify-center">
+            <TicketIcon class="w-10 h-10 text-text-muted" />
+          </div>
+          <h3 class="text-xl font-bold text-text mb-2">No bookings yet</h3>
+          <p class="text-text-light mb-6">Start exploring events and book your tickets!</p>
+          <NuxtLink to="/events" class="btn-neon inline-block">
+            Browse Events
+          </NuxtLink>
+        </div>
+
+        <!-- Bookings List -->
         <div v-else class="space-y-4">
           <div 
-            v-for="booking in bookings" 
+            v-for="(booking, index) in bookings" 
             :key="booking.ID"
-            class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow group"
+            class="glass-card p-5 card-hover stagger-item"
+            :style="{ animationDelay: `${index * 0.05}s` }"
           >
             <div class="flex items-start gap-5">
-              <!-- Event Image Thumbnail -->
+              <!-- Event Image -->
               <div 
-                class="w-24 h-24 rounded-xl bg-gray-200 flex-shrink-0 bg-cover bg-center"
-                :style="booking.event?.image_url ? `background-image: url(${booking.event.image_url})` : ''"
+                class="w-28 h-28 rounded-xl bg-dark-50 flex-shrink-0 bg-cover bg-center border border-surface-border overflow-hidden"
               >
-                <div v-if="!booking.event?.image_url" class="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                  No Image
+                <img 
+                  v-if="booking.event?.image_url"
+                  :src="booking.event.image_url"
+                  :alt="booking.event?.name"
+                  class="w-full h-full object-cover"
+                />
+                <div v-else class="w-full h-full flex items-center justify-center">
+                  <PhotoIcon class="w-8 h-8 text-text-muted" />
                 </div>
               </div>
 
               <div class="flex-1 min-w-0">
-                <div class="flex justify-between items-start mb-2">
-                   <div>
-                      <h3 class="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors truncate">
-                        {{ booking.event?.name || 'Unknown Event' }}
-                      </h3>
-                      <p class="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                         <CalendarIcon class="w-4 h-4" />
-                         {{ booking.event ? formatDate(booking.event.date) : 'Date unavailable' }}
-                         <span v-if="booking.event" class="mx-1">•</span>
-                         <span v-if="booking.event">{{ booking.event.venue_name }}</span>
-                      </p>
-                   </div>
-                   <UiBadge :variant="booking.status === 'confirmed' ? 'success' : 'error'">
-                     {{ booking.status }}
-                   </UiBadge>
+                <div class="flex justify-between items-start mb-3">
+                  <div>
+                    <h3 class="text-lg font-bold text-text group-hover:text-primary transition-colors truncate">
+                      {{ booking.event?.name || 'Unknown Event' }}
+                    </h3>
+                    <div class="flex items-center gap-2 mt-1 text-sm text-text-light">
+                      <CalendarIcon class="w-4 h-4 text-primary" />
+                      <span>{{ booking.event ? formatDate(booking.event.date) : 'Date unavailable' }}</span>
+                      <span class="text-text-muted">•</span>
+                      <MapPinIcon class="w-4 h-4 text-secondary" />
+                      <span class="truncate">{{ booking.event?.venue_name || 'Venue TBD' }}</span>
+                    </div>
+                  </div>
+                  <UiBadge :variant="booking.status === 'confirmed' ? 'success' : 'error'">
+                    {{ booking.status }}
+                  </UiBadge>
                 </div>
                 
-                <div class="flex items-end justify-between mt-4">
-                  <div class="text-sm">
-                    <span class="text-gray-500">Tickets: </span>
-                    <span class="font-bold text-gray-900">{{ booking.quantity }}</span>
-                    <span class="mx-2 text-gray-300">|</span>
-                    <span class="text-gray-500">Total: </span>
-                    <span class="font-bold text-primary">${{ booking.total_price.toFixed(2) }}</span>
+                <div class="flex items-end justify-between mt-4 pt-4 border-t border-surface-border">
+                  <div class="flex items-center gap-4 text-sm">
+                    <div>
+                      <span class="text-text-muted">Tickets:</span>
+                      <span class="font-bold text-text ml-1">{{ booking.quantity }}</span>
+                    </div>
+                    <div>
+                      <span class="text-text-muted">Total:</span>
+                      <span class="font-bold text-gradient ml-1">${{ booking.total_price.toFixed(2) }}</span>
+                    </div>
                   </div>
 
                   <button 
                     v-if="booking.status === 'confirmed'"
                     @click="confirmCancel(booking)"
-                    class="text-sm text-red-500 font-medium hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
+                    class="text-sm text-error font-medium hover:text-error-light hover:bg-error/10 px-4 py-2 rounded-lg transition-colors"
                   >
                     Cancel Booking
                   </button>
@@ -119,6 +163,7 @@
       </div>
     </div>
 
+    <!-- Cancel Confirmation Modal -->
     <UiConfirmDialog
       :is-open="isCancelModalOpen"
       title="Cancel Booking"
@@ -132,8 +177,18 @@
 </template>
 
 <script setup lang="ts">
-import { TicketIcon, CalendarIcon } from '@heroicons/vue/24/outline'
-import { useToast } from "vue-toastification";
+import { 
+  TicketIcon, 
+  CalendarIcon, 
+  MapPinIcon, 
+  EnvelopeIcon,
+  IdentificationIcon,
+  ArrowRightOnRectangleIcon,
+  CheckIcon,
+  ExclamationTriangleIcon,
+  PhotoIcon
+} from '@heroicons/vue/24/outline'
+import { useToast } from "vue-toastification"
 import type { Booking } from '~/types'
 
 const api = useApi()
@@ -194,6 +249,7 @@ const formatDate = (dateString?: string) => {
 
 const handleLogout = () => {
   api.removeToken()
+  localStorage.removeItem('user_email')
   router.push('/')
 }
 </script>

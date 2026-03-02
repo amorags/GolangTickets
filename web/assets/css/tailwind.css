@@ -5,17 +5,191 @@
 @layer base {
   body {
     @apply font-sans text-text antialiased min-h-screen;
-    background: linear-gradient(135deg, #FFF5F5 0%, #F0F4FF 100%);
+    background: #0F0F1A;
+    background-image: 
+      radial-gradient(circle at 20% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(244, 114, 182, 0.05) 0%, transparent 70%);
+    background-attachment: fixed;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(15, 15, 26, 0.8);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #8B5CF6 0%, #06B6D4 100%);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #A78BFA 0%, #22D3EE 100%);
+  }
+
+  /* Selection styling */
+  ::selection {
+    background: rgba(139, 92, 246, 0.4);
+    color: #F8FAFC;
   }
 }
 
-/* Custom transitions that might not be easily covered by utilities */
+@layer components {
+  /* Glassmorphism card */
+  .glass-card {
+    @apply bg-surface backdrop-blur-xl border border-surface-border rounded-2xl;
+    box-shadow: 
+      0 0 30px rgba(139, 92, 246, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  /* Neon glow button */
+  .btn-neon {
+    @apply relative px-6 py-3 font-bold rounded-xl overflow-hidden transition-all duration-300;
+    @apply bg-gradient-to-r from-primary to-secondary text-white;
+    box-shadow: 
+      0 0 20px rgba(139, 92, 246, 0.4),
+      0 0 40px rgba(6, 182, 212, 0.2);
+  }
+
+  .btn-neon:hover {
+    box-shadow: 
+      0 0 30px rgba(139, 92, 246, 0.6),
+      0 0 60px rgba(6, 182, 212, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .btn-neon:active {
+    transform: translateY(0);
+  }
+
+  /* Ghost button */
+  .btn-ghost {
+    @apply px-6 py-3 font-medium rounded-xl border border-surface-border;
+    @apply bg-transparent text-text-light hover:bg-surface-hover hover:text-text;
+    @apply transition-all duration-300;
+  }
+
+  /* Input styling */
+  .input-cyber {
+    @apply w-full px-4 py-3 rounded-xl bg-dark-50 border border-surface-border;
+    @apply text-text placeholder-text-muted;
+    @apply focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none;
+    @apply transition-all duration-300;
+  }
+
+  .input-cyber:focus {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+  }
+
+  /* Card hover effect */
+  .card-hover {
+    @apply transition-all duration-500;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.4),
+      0 0 30px rgba(139, 92, 246, 0.2);
+  }
+
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #8B5CF6 0%, #06B6D4 50%, #F472B6 100%);
+  }
+
+  /* Animated gradient border */
+  .gradient-border {
+    position: relative;
+    background: linear-gradient(#0F0F1A, #0F0F1A) padding-box,
+                linear-gradient(135deg, #8B5CF6, #06B6D4, #F472B6, #8B5CF6) border-box;
+    border: 2px solid transparent;
+    animation: gradientX 8s linear infinite;
+    background-size: 100% 100%, 300% 300%;
+  }
+
+  /* Scan line effect */
+  .scan-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #8B5CF6, transparent);
+    animation: scanLine 3s linear infinite;
+    opacity: 0.5;
+  }
+
+  /* Glow dot indicator */
+  .glow-dot {
+    @apply w-2 h-2 rounded-full;
+    box-shadow: 0 0 10px currentColor;
+  }
+
+  /* Tag/Badge styling */
+  .tag-cyber {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider;
+    @apply bg-primary/20 text-primary-light border border-primary/30;
+  }
+
+  /* Loading spinner */
+  .spinner-cyber {
+    @apply animate-spin rounded-full border-2 border-surface-border;
+    border-top-color: #8B5CF6;
+    border-right-color: #06B6D4;
+  }
+}
+
+/* Page transitions */
 .page-enter-active,
 .page-leave-active {
-  transition: all 0.3s;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.page-enter-from,
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+}
+
 .page-leave-to {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(-20px) scale(0.98);
+}
+
+/* Stagger animation for lists */
+.stagger-item {
+  animation: floatIn 0.6s ease-out backwards;
+}
+
+.stagger-item:nth-child(1) { animation-delay: 0.05s; }
+.stagger-item:nth-child(2) { animation-delay: 0.1s; }
+.stagger-item:nth-child(3) { animation-delay: 0.15s; }
+.stagger-item:nth-child(4) { animation-delay: 0.2s; }
+.stagger-item:nth-child(5) { animation-delay: 0.25s; }
+.stagger-item:nth-child(6) { animation-delay: 0.3s; }
+.stagger-item:nth-child(7) { animation-delay: 0.35s; }
+.stagger-item:nth-child(8) { animation-delay: 0.4s; }
+.stagger-item:nth-child(9) { animation-delay: 0.45s; }
+.stagger-item:nth-child(10) { animation-delay: 0.5s; }
+
+/* Noise texture overlay */
+.noise-overlay::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  z-index: 9999;
 }

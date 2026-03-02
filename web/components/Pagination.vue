@@ -1,44 +1,56 @@
 <template>
-  <div v-if="totalPages > 1" class="flex items-center justify-center gap-2 mt-8">
+  <div class="flex items-center justify-center gap-2 mt-10">
+    <!-- Previous Button -->
     <button
+      @click="$emit('update:page', page - 1)"
       :disabled="!hasPrevious"
-      @click="goToPage(page - 1)"
-      class="px-4 py-2 rounded-xl font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed bg-white border border-gray-200 hover:bg-gray-50"
+      class="btn-ghost px-4 py-2 text-sm flex items-center gap-2"
+      :class="{ 'opacity-50 cursor-not-allowed': !hasPrevious }"
     >
+      <ChevronLeftIcon class="w-4 h-4" />
       Previous
     </button>
 
-    <div class="flex gap-1">
+    <!-- Page Numbers -->
+    <div class="flex items-center gap-1">
       <button
-        v-for="pageNum in visiblePages"
-        :key="pageNum"
-        @click="goToPage(pageNum)"
+        v-for="p in displayedPages"
+        :key="p"
+        @click="p !== '...' && $emit('update:page', p)"
         :class="[
-          'px-4 py-2 rounded-xl font-medium transition-all',
-          pageNum === page
-            ? 'bg-primary text-white shadow-lg shadow-primary/30'
-            : 'bg-white border border-gray-200 hover:bg-gray-50'
+          'w-10 h-10 rounded-lg text-sm font-medium transition-all duration-300',
+          p === page 
+            ? 'bg-gradient-to-br from-primary to-secondary text-white shadow-glow' 
+            : p === '...' 
+            ? 'text-text-muted cursor-default' 
+            : 'text-text-light hover:text-text hover:bg-surface-light border border-surface-border'
         ]"
       >
-        {{ pageNum }}
+        {{ p }}
       </button>
     </div>
 
+    <!-- Next Button -->
     <button
+      @click="$emit('update:page', page + 1)"
       :disabled="!hasNext"
-      @click="goToPage(page + 1)"
-      class="px-4 py-2 rounded-xl font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed bg-white border border-gray-200 hover:bg-gray-50"
+      class="btn-ghost px-4 py-2 text-sm flex items-center gap-2"
+      :class="{ 'opacity-50 cursor-not-allowed': !hasNext }"
     >
       Next
+      <ChevronRightIcon class="w-4 h-4" />
     </button>
   </div>
 
-  <div class="text-center text-sm text-gray-500 mt-4">
-    Showing {{ startItem }}-{{ endItem }} of {{ total }} events
+  <!-- Page Info -->
+  <div class="text-center mt-4 text-sm text-text-muted">
+    Page {{ page }} of {{ totalPages }} • {{ total }} total events
   </div>
 </template>
 
 <script setup lang="ts">
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline'
+
 const props = defineProps<{
   page: number
   totalPages: number
@@ -48,38 +60,28 @@ const props = defineProps<{
   hasPrevious: boolean
 }>()
 
-const emit = defineEmits<{
+defineEmits<{
   'update:page': [page: number]
 }>()
 
-const goToPage = (pageNum: number) => {
-  emit('update:page', pageNum)
-  if (import.meta.client) {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+const displayedPages = computed(() => {
+  const pages: (number | string)[] = []
+  const { page, totalPages } = props
+  
+  if (totalPages <= 7) {
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i)
+    }
+  } else {
+    if (page <= 3) {
+      pages.push(1, 2, 3, 4, '...', totalPages)
+    } else if (page >= totalPages - 2) {
+      pages.push(1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages)
+    } else {
+      pages.push(1, '...', page - 1, page, page + 1, '...', totalPages)
+    }
   }
-}
-
-const visiblePages = computed(() => {
-  const pages = []
-  let start = Math.max(1, props.page - 2)
-  let end = Math.min(props.totalPages, start + 4)
-
-  if (end - start < 4) {
-    start = Math.max(1, end - 4)
-  }
-
-  for (let i = start; i <= end; i++) {
-    pages.push(i)
-  }
-
+  
   return pages
-})
-
-const startItem = computed(() => {
-  return (props.page - 1) * props.limit + 1
-})
-
-const endItem = computed(() => {
-  return Math.min(props.page * props.limit, props.total)
 })
 </script>
